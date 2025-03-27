@@ -156,7 +156,13 @@ fn main() {
                         break status.code().unwrap();
                     }
                     Ok(None) => {
-                        sleep(interval - time_before.elapsed().unwrap());
+                        let elapsed = time_before.elapsed().unwrap();
+                        if elapsed < interval { // check if the cycle took less than the interval
+                            sleep(interval - elapsed);
+                        } 
+                        else { // print a warning rather than panic
+                            eprintln!("Warning: Cycle took longer than interval: {}ms > {}ms", elapsed.as_millis(), interval.as_millis());
+                        }
                     }
                     Err(e) => println!("Error waiting: {}", e),
                 }
